@@ -2,13 +2,8 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'asia.gcr.io/flex-k8s/terumoni-crawler:$REVISION_ID', '.']
   - name: 'gcr.io/cloud-builders/docker'
+    args: ['tag', 'asia.gcr.io/flex-k8s/terumoni-crawler:$REVISION_ID', 'asia.gcr.io/flex-k8s/terumoni-crawler::latest']
+  - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'asia.gcr.io/flex-k8s/terumoni-crawler:$REVISION_ID']
-  - name: 'gcr.io/cloud-builders/kubectl'
-    args:
-      - set
-      - image
-      - deployment/terumoni-crawler
-      - terumoni-crawler=asia.gcr.io/flex-k8s/terumoni-crawler:$REVISION_ID
-    env:
-      - 'CLOUDSDK_COMPUTE_ZONE=asia-northeast1-b'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=flex'
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'asia.gcr.io/flex-k8s/terumoni-crawler:latest']
