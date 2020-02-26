@@ -3,10 +3,6 @@ steps:
     args: ['build', '-t', 'asia.gcr.io/flex-k8s/terumoni-crawler:$REVISION_ID', '.']
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'asia.gcr.io/flex-k8s/terumoni-crawler:$REVISION_ID']
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'asia.gcr.io/flex-k8s/terumoni-crawler:latest', '.']
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'asia.gcr.io/flex-k8s/terumoni-crawler:latest']
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
       - set
