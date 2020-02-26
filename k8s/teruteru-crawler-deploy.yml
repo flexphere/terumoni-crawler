@@ -1,18 +1,18 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: teruteru-admin-deployment
+  name: terumoni-crawler-deployment
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: teruteru-admin
+        app: terumoni-crawler
     spec:
       containers:
-        - image: flexphere/teruteru-admin
+        - image: asia.gcr.io/terumoni/crawler:latest
           imagePullPolicy: Always
-          name: teruteru-admin-container
+          name: terumoni-crawler-container
           ports:
             - containerPort: 8080
           env:
@@ -31,3 +31,5 @@ spec:
                   secretKeyRef:
                       name: database-config
                       key: password
+            - name: DB_NAME
+              value: teruteru
