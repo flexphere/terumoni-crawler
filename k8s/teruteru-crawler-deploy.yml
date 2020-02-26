@@ -1,0 +1,33 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: teruteru-admin-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: teruteru-admin
+    spec:
+      containers:
+        - image: flexphere/teruteru-admin
+          imagePullPolicy: Always
+          name: teruteru-admin-container
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              valueFrom:
+                  secretKeyRef:
+                      name: database-config
+                      key: hostname
+            - name: DB_USER
+              valueFrom:
+                  secretKeyRef:
+                      name: database-config
+                      key: username
+            - name: DB_PASS
+              valueFrom:
+                  secretKeyRef:
+                      name: database-config
+                      key: password
