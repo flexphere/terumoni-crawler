@@ -67,7 +67,11 @@ const crawl = async() => {
         const plants = await getPlants(con);
 
         for (const plant of plants) {
-            const date = moment().subtract(1, 'days').format("YYYY-MM-DD");
+            // in JST
+            // const date = moment().subtract(1, 'days').format("YYYY-MM-DD");
+
+            // in UTC
+            const date = moment().format("YYYY-MM-DD");
             const options = {
                 opt: date,
                 unit: Buffer.from(plant.plant_id).toString('base64'),
