@@ -50,8 +50,8 @@ const getPlants = (con) => {
 const insertData = (con, data) => {
     return new Promise((resolve, reject) => {
         const q = `
-            INSERT INTO logs (plant_id, time, ct00, ct01, ct02, ct03) 
-            VALUES ('${data.plant_id}','${data.time}',${data.ct00},${data.ct01},${data.ct02},${data.ct03});
+            INSERT INTO logs (plant_id, time, ct00, ct01, ct02, ct03, total) 
+            VALUES ('${data.plant_id}','${data.time}',${data.ct00},${data.ct01},${data.ct02},${data.ct03},${data.total});
         `;
         con.query(q, (err, rows, fields) => {
             if (err) reject(err);
@@ -86,6 +86,7 @@ const crawl = async() => {
                 if (i == 0) return;
                 data.plant_id = plant.plant_id;
                 data.time = `${date} ${data.time}:00`;
+                data.total = data.ct00 + data.ct01 + data.ct02 + data.ct03;
                 await insertData(con, data);
                 console.log(`Insert: ${data.plant_id} / ${data.time}`);
             });
