@@ -78,7 +78,7 @@ const updateData = (con, data) => {
     return new Promise(async(resolve, reject) => {
         const q = `
             UPDATE logs 
-            SET ct00 = ${data.ct00}, ct01 = ${data.ct01}, ct02 = ${data.ct02}, ct03 = ${data.ct03}, total = ${data.ct03}
+            SET ct00 = ${data.ct00}, ct01 = ${data.ct01}, ct02 = ${data.ct02}, ct03 = ${data.ct03}, total = ${data.total}
             WHERE plant_id = '${data.plant_id}' AND time = '${data.time}';
         `;
         console.log(q);
