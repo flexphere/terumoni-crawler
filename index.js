@@ -46,13 +46,42 @@ const getPlants = (con) => {
     });
 };
 
-//発電量情報をDBに保存
-const insertData = (con, data) => {
+//発電量情報の存在確認
+const dataExists = (con, data) => {
     return new Promise((resolve, reject) => {
+        const q = `SELECT count(*) as cnt FROM logs where plant_id = ? AND time = ?;`;
+        con.query(q, [data.plant_id, data.time], (err, rows, fields) => {
+            if (err) reject(err);
+            const result = (rows.length && rows[0].cnt > 0) ? true : false;
+            resolve(result);
+        });
+    });
+};
+
+//発電量情報を追加
+const insertData = (con, data) => {
+    return new Promise(async(resolve, reject) => {
         const q = `
             INSERT INTO logs (plant_id, time, ct00, ct01, ct02, ct03, total) 
             VALUES ('${data.plant_id}','${data.time}',${data.ct00},${data.ct01},${data.ct02},${data.ct03},${data.total});
         `;
+        console.log(q);
+        con.query(q, (err, rows, fields) => {
+            if (err) reject(err);
+            resolve(rows);
+        });
+    });
+};
+
+//発電量情報を更新
+const updateData = (con, data) => {
+    return new Promise(async(resolve, reject) => {
+        const q = `
+            UPDATE logs 
+            SET ct00 = ${data.ct00}, ct01 = ${data.ct01}, ct02 = ${data.ct02}, ct03 = ${data.ct03}, total = ${data.ct03}
+            WHERE plant_id = '${data.plant_id}' AND time = '${data.time}';
+        `;
+        console.log(q);
         con.query(q, (err, rows, fields) => {
             if (err) reject(err);
             resolve(rows);
@@ -62,8 +91,8 @@ const insertData = (con, data) => {
 
 
 const crawl = async() => {
+    const con = await connectDB();
     try {
-        const con = await connectDB();
         const plants = await getPlants(con);
 
         for (const plant of plants) {
@@ -81,20 +110,23 @@ const crawl = async() => {
             }
 
             const response = await axios.get(URL, { params: options });
-
-            response.data.map(async(data, i) => {
-                if (i == 0) return;
+            response.data.shift();
+            for (data of response.data) {
                 data.plant_id = plant.plant_id;
                 data.time = `${date} ${data.time}:00`;
                 data.total = data.ct00 + data.ct01 + data.ct02 + data.ct03;
-                await insertData(con, data);
-                console.log(`Insert: ${data.plant_id} / ${data.time}`);
-            });
+                const exists = await dataExists(con, data)
+                if (exists) {
+                    await updateData(con, data);
+                } else {
+                    await insertData(con, data);
+                }
+            }
         };
-
-        await disconnectDB(con);
     } catch (err) {
-        throw err;
+        console.log(err.stack)
+    } finally {
+        await disconnectDB(con);
     }
 };
 

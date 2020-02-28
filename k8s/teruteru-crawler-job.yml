@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: terumoni-crawler-job
+spec:
+  template:
+    spec:
+      containers:
+        - image: asia.gcr.io/flex-k8s/terumoni-crawler
+          imagePullPolicy: Always
+          name: terumoni-crawler-container
+          env:
+            - name: DB_HOST
+              valueFrom:
+                  secretKeyRef:
+                      name: database-config
+                      key: hostname
+            - name: DB_USER
+              valueFrom:
+                  secretKeyRef:
+                      name: database-config
+                      key: username
+            - name: DB_PASS
+              valueFrom:
+                  secretKeyRef:
+                      name: database-config
+                      key: password
+            - name: DB_NAME
+              value: "teruteru"
+      restartPolicy: Never

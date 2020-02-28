@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: terumoni-crawler-cronjob
 spec:
-  schedule: "30 15 * * *"
+  schedule: "5 * * * *"
   jobTemplate:
     spec:
       template:
